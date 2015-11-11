@@ -1,0 +1,232 @@
+#!/bin/python3
+import io
+import sys
+import struct
+
+class io_ext(object):
+    def __init__(self, file=None):
+        if file is None:
+            self.file = io.BytesIO()
+        else:
+            self.file = file
+
+    def __enter__ (self):
+        self.file.__enter__()
+        return self
+
+    def __exit__ (self, exc_type, exc_value, traceback):
+        self.file.__exit__(exc_type, exc_value, traceback)
+
+    def size(self):
+        pos = self.file.tell()
+        self.file.seek(0, io.SEEK_END)
+        size = self.file.tell()
+        self.file.seek(pos, io.SEEK_SET)
+        return size
+
+    def tell(self):
+        return self.file.tell()
+
+    def seek(self, *args):
+        return self.file.seek(*args)
+
+    def eof(self):
+        return self.tell() == self.size()
+
+    def skip(self, bytes):
+        self.file.seek(bytes, io.SEEK_CUR)
+
+    def peek(self, *args):
+        return self.PeekObject(self.file, *args)
+
+    def read_to_zero(self):
+        out = b''
+        byte = self.file.read(1)
+        n = 0
+        while byte != b"\x00":
+            out += byte
+            byte = self.file.read(1)
+            if n > 1000:
+                raise RuntimeError('dude, I\'m reading for too long (1000+ bytes)')
+            n += 1
+        return out
+
+    def read_to_eof(self):
+        return self.file.read()
+
+    def read(self, *args):
+        return self.file.read(*args)
+
+    def read_u8(self): return struct.unpack('B', self.file.read(1))[0]
+    def read_u16_le(self): return struct.unpack('<H', self.file.read(2))[0]
+    def read_u32_le(self): return struct.unpack('<I', self.file.read(4))[0]
+    def read_u64_le(self): return struct.unpack('<Q', self.file.read(8))[0]
+    def read_u16_be(self): return struct.unpack('>H', self.file.read(2))[0]
+    def read_u32_be(self): return struct.unpack('>I', self.file.read(4))[0]
+    def read_u64_be(self): return struct.unpack('>Q', self.file.read(8))[0]
+    def read_s32_le(self): return struct.unpack('<i', self.file.read(4))[0]
+    def read_f32(self): return struct.unpack('f', self.file.read(4))[0]
+    def read_f64(self): return struct.unpack('d', self.file.read(8))[0]
+
+    class PeekObject(object):
+        def __init__(self, file, *seek_args):
+            self.file = file
+            self.seek_args = seek_args
+        def __enter__(self):
+            self.old_pos = self.file.tell()
+            self.file.seek(*self.seek_args)
+        def __exit__(self, *unused):
+            self.file.seek(self.old_pos)
+
+def group(lst, n):
+    """group([0,3,4,10,2,3], 2) => [(0,3), (4,10), (2,3)]"""
+    return zip(*[lst[i::n] for i in range(n)])
+
+def is_leap_year(year):
+    if (year % 4) != 0:
+        return False
+    if (year % 100) == 0:
+        return (year % 400) == 0
+    return True
+
+def get_time_from_ticks(ticks):
+    one_millisecond = 10000
+    days_per_year = 365
+    days_per_4_years = days_per_year * 4 + 1
+    days_per_100_years = days_per_4_years * 25 - 1
+    days_per_400_years = days_per_100_years * 4 + 1
+    year_day_acc = (
+        (0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365),
+        (0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366))
+    n = ticks // one_millisecond
+    millisecond = n % 1000
+    n //= 1000
+    second = n % 60
+    n //= 60
+    minute = n % 60
+    n //= 60
+    hour = n % 24
+    n //= 24
+    total_days = n
+
+    y400 = n // days_per_400_years
+    n -= y400 * days_per_400_years
+
+    y100 = n // days_per_100_years
+    if y100 == 4:
+        y100 = 3
+    n -= y100 * days_per_100_years
+
+    y4 = n // days_per_4_years
+    n -= y4 * days_per_4_years
+
+    y1 = n // days_per_year
+    if y1 == 4:
+        y1 = 3
+    n -= y1 * days_per_year
+
+    year = 1601 + y400 * 400 + y100 * 100 + y4 * 4 + y1
+    is_leap = is_leap_year(year)
+
+    month = 0
+    while n >= year_day_acc[is_leap][month]:
+        month += 1
+
+    day = n - year_day_acc[is_leap][month - 1] + 1
+    day_of_week = (total_days + 1) % 7
+
+    return {
+        'year': year,
+        'month': month,
+        'day': day,
+        'hour': hour,
+        'minute': minute,
+        'second': second,
+        'millisecond': millisecond,
+    }
+
+def read_track(track_no, meta_io, index_io):
+    unk0 = index_io.read_s32_le()
+    print('unk0:', unk0)
+    file_name_offset = index_io.read_u32_le()
+    with meta_io.peek(file_name_offset):
+        file_name = meta_io.read_to_zero()
+    print('track %d: %s (%d)' % (track_no, file_name, file_name_offset))
+    subsong_index = index_io.read_u32_le()
+    print('\tsubsong index: %d' % subsong_index)
+    file_size = index_io.read_s32_le()
+    print('\tfile size: %d' % file_size)
+    unk1 = index_io.read_s32_le()
+    print('\tunk1:', unk1)
+
+    if unk1 != 0 and unk1 != -1:
+        print('I bet the file is truncated right after this...!')
+
+    file_time = get_time_from_ticks(index_io.read_u64_le())
+    print('\tfile modification time:', file_time)
+    duration = index_io.read_f64()
+    rpg_album = index_io.read_f32()
+    rpg_track = index_io.read_f32()
+    rpk_album = index_io.read_f32()
+    rpk_track = index_io.read_f32()
+    entry_count = index_io.read_u32_le()
+    entries = [index_io.read_u32_le() for i in range(entry_count)]
+
+    primary_key_count, \
+    secondary_key_count, \
+    secondary_key_offset = entries[0:3]
+    print('\tprimary key count', primary_key_count)
+    print('\tsecondary key count', secondary_key_count)
+    print('\tsecondary key offset', secondary_key_offset)
+    print('\t"unused" entries[%d] = %d' % (secondary_key_offset - 1, entries[secondary_key_offset - 1]))
+
+    primary_keys = {}
+    for i in range(primary_key_count):
+        if entries[3+i*2] != i:
+            raise RuntimeError('Corrupt secondary key offset')
+        key_offset = entries[3+i*2+1]
+        with meta_io.peek(key_offset):
+            key = meta_io.read_to_zero()
+        value_offset = entries[3+2*primary_key_count+1+i]
+        with meta_io.peek(value_offset):
+            value = meta_io.read_to_zero()
+        primary_keys[key] = value
+
+    secondary_keys = {}
+    for i in range(secondary_key_count):
+        key_offset = entries[secondary_key_offset+i*2+primary_key_count]
+        value_offset = entries[secondary_key_offset+i*2+primary_key_count+1]
+        with meta_io.peek(key_offset):
+            key = meta_io.read_to_zero()
+        with meta_io.peek(value_offset):
+            value = meta_io.read_to_zero()
+        secondary_keys[key] = value
+
+    print('\tduration', duration)
+    for k, v in primary_keys.items():
+        print('\tprimary_keys[%s] = %s' % (k, v))
+    for k, v in secondary_keys.items():
+        print('\tsecondary_keys[%s] = %s' % (k, v))
+
+    if unk0 == 5:
+        print('\tpadding: ', index_io.read(64))
+
+    print('')
+    return True
+
+magic = b'\xE1\xA0\x9C\x91\xF8\x3C\x77\x42\x85\x2C\x3B\xCC\x14\x01\xD3\xF2'
+with io_ext(open(sys.argv[1], 'rb')) as fh:
+    if fh.read(len(magic)) != magic:
+        raise RuntimeError('Not a FPL file')
+    meta_size = fh.read_u32_le()
+    meta = fh.read(meta_size)
+    track_count = fh.read_u32_le()
+    print('Got %d tracks' % track_count)
+
+    with io_ext(io.BytesIO(meta)) as meta_io, \
+        io_ext(io.BytesIO(fh.read_to_eof())) as index_io:
+
+        for track_no in range(track_count):
+            read_track(track_no, meta_io, index_io)
+
+    print('%x' % (len(magic) + 4))
