@@ -9,8 +9,379 @@ def get_file(file_name):
     with open(os.path.join(os.path.dirname(__file__), file_name), 'rb') as handle:
         return handle.read()
 
-class TestSequenceFunctions(unittest.TestCase):
-    def test_138(self):
+def test_track(
+    track,
+    flags=None,
+    subsong_index=0,
+    file_name=None,
+    file_size=None,
+    file_time=None,
+    duration=None,
+    rpg_album=-1000.0,
+    rpg_track=-1000.0,
+    rpk_album=-1.0,
+    rpk_track=-1.0,
+    primary_keys={},
+    secondary_keys={}):
+
+    tc = unittest.TestCase('__init__')
+    tc.assertEqual(track.flags, flags)
+    tc.assertEqual(track.subsong_index, subsong_index)
+    tc.assertEqual(track.file_name, file_name)
+    tc.assertEqual(track.file_size, file_size)
+    tc.assertEqual(track.file_time, file_time)
+    tc.assertEqual(track.duration, duration)
+    tc.assertEqual(track.rpg_album, rpg_album)
+    tc.assertEqual(track.rpg_track, rpg_track)
+    tc.assertEqual(track.rpk_album, rpk_album)
+    tc.assertEqual(track.rpk_track, rpk_track)
+    tc.assertEqual(track.primary_keys, primary_keys)
+    tc.assertEqual(track.secondary_keys, secondary_keys)
+
+class TestPlaylistReader(unittest.TestCase):
+    def test_0_9_1(self):
+        playlist = fpl_reader.read_playlist(get_file('1.0.3.fpl'))
+        self.assertEqual(len(playlist.tracks), 3)
+
+        test_track(playlist.tracks[0],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3',
+            file_size=8414449,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=347.99126984126985,
+            primary_keys={
+                b'date': b'2008',
+                b'title': b'Kalimba',
+                b'artist': b'Mr. Scruff',
+                b'band': b'Mr. Scruff',
+                b'album': b'Ninja Tuna',
+                b'genre': b'Electronic',
+                b'publisher': b'Ninja Tune',
+                b'composer': b'A. Carthy and A. Kingslow',
+                b'comment': b'Ninja Tune Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[1],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Maid with the Flaxen Hair.mp3',
+            file_size=4113874,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=169.65331065759636,
+            primary_keys={
+                b'date':      b'2008',
+                b'artist':    b'Slovak Radio Symphony Orchestra',
+                b'band':      b'Richard Stoltzman',
+                b'album':     b'Fine Music, Vol. 1',
+                b'genre':     b'Classical',
+                b'conductor': b'Kirk Trevor',
+                b'composer':  b'Claude Debussy',
+                b'comment':   b'Navona Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[2],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3',
+            file_size=4842585,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=200.53004535147392,
+            primary_keys={
+                b'date':     b'2004',
+                b'title':    b'Sleep Away',
+                b'artist':   b'Bob Acri',
+                b'band':     b'Bob Acri',
+                b'album':    b'Bob Acri',
+                b'genre':    b'Other',
+                b'composer': b'Robert R. Acri',
+                b'comment':  b'Blujazz Productions'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+
+
+    def test_1_0_3(self):
+        playlist = fpl_reader.read_playlist(get_file('1.0.3.fpl'))
+        self.assertEqual(len(playlist.tracks), 3)
+
+        test_track(playlist.tracks[0],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3',
+            file_size=8414449,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=347.99126984126985,
+            primary_keys={
+                b'date': b'2008',
+                b'title': b'Kalimba',
+                b'artist': b'Mr. Scruff',
+                b'band': b'Mr. Scruff',
+                b'album': b'Ninja Tuna',
+                b'genre': b'Electronic',
+                b'publisher': b'Ninja Tune',
+                b'composer': b'A. Carthy and A. Kingslow',
+                b'comment': b'Ninja Tune Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[1],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Maid with the Flaxen Hair.mp3',
+            file_size=4113874,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=169.65331065759636,
+            primary_keys={
+                b'date':      b'2008',
+                b'artist':    b'Slovak Radio Symphony Orchestra',
+                b'band':      b'Richard Stoltzman',
+                b'album':     b'Fine Music, Vol. 1',
+                b'genre':     b'Classical',
+                b'conductor': b'Kirk Trevor',
+                b'composer':  b'Claude Debussy',
+                b'comment':   b'Navona Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[2],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3',
+            file_size=4842585,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=200.53004535147392,
+            primary_keys={
+                b'date':     b'2004',
+                b'title':    b'Sleep Away',
+                b'artist':   b'Bob Acri',
+                b'band':     b'Bob Acri',
+                b'album':    b'Bob Acri',
+                b'genre':    b'Other',
+                b'composer': b'Robert R. Acri',
+                b'comment':  b'Blujazz Productions'},
+            secondary_keys={
+                b'tagtype':         b'id3v2|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+
+
+    def test_1_1_18(self):
+        playlist = fpl_reader.read_playlist(get_file('1.1.18.fpl'))
+        self.assertEqual(len(playlist.tracks), 3)
+
+        test_track(playlist.tracks[0],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3',
+            file_size=8414449,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=348.00326530612244,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Kalimba',
+                b'artist':       b'Mr. Scruff',
+                b'album artist': b'Mr. Scruff',
+                b'album':        b'Ninja Tuna',
+                b'genre':        b'Electronic',
+                b'publisher':    b'Ninja Tune',
+                b'composer':     b'A. Carthy and A. Kingslow',
+                b'comment':      b'Ninja Tune Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[1],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Maid with the Flaxen Hair.mp3',
+            file_size=4113874,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=169.66530612244898,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Maid with the Flaxen Hair',
+                b'artist':       b'Richard Stoltzman/Slovak Radio Symphony Orchestra',
+                b'album artist': b'Richard Stoltzman',
+                b'album':        b'Fine Music, Vol. 1',
+                b'genre':        b'Classical',
+                b'conductor':    b'Kirk Trevor',
+                b'composer':     b'Claude Debussy',
+                b'comment':      b'Navona Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[2],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3',
+            file_size=4842585,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=200.54204081632653,
+            primary_keys={
+                b'date':         b'2004',
+                b'title':        b'Sleep Away',
+                b'artist':       b'Bob Acri',
+                b'album artist': b'Bob Acri',
+                b'album':        b'Bob Acri',
+                b'genre':        b'Jazz',
+                b'composer':     b'Robert R. Acri',
+                b'comment':      b'Blujazz Productions'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+
+
+    def test_1_2_9(self):
+        playlist = fpl_reader.read_playlist(get_file('1.2.9.fpl'))
+        self.assertEqual(len(playlist.tracks), 3)
+
+        test_track(playlist.tracks[0],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3',
+            file_size=8414449,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=348.00326530612244,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Kalimba',
+                b'artist':       b'Mr. Scruff',
+                b'album artist': b'Mr. Scruff',
+                b'album':        b'Ninja Tuna',
+                b'genre':        b'Electronic',
+                b'publisher':    b'Ninja Tune',
+                b'composer':     b'A. Carthy and A. Kingslow',
+                b'comment':      b'Ninja Tune Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[1],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Maid with the Flaxen Hair.mp3',
+            file_size=4113874,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=169.66530612244898,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Maid with the Flaxen Hair',
+                b'artist':       b'Richard Stoltzman/Slovak Radio Symphony Orchestra',
+                b'album artist': b'Richard Stoltzman',
+                b'album':        b'Fine Music, Vol. 1',
+                b'genre':        b'Classical',
+                b'conductor':    b'Kirk Trevor',
+                b'composer':     b'Claude Debussy',
+                b'comment':      b'Navona Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[2],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3',
+            file_size=4842585,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=200.54204081632653,
+            primary_keys={
+                b'date':         b'2004',
+                b'title':        b'Sleep Away',
+                b'artist':       b'Bob Acri',
+                b'album artist': b'Bob Acri',
+                b'album':        b'Bob Acri',
+                b'genre':        b'Jazz',
+                b'composer':     b'Robert R. Acri',
+                b'comment':      b'Blujazz Productions'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+
+
+    def test_1_3_8(self):
         playlist = fpl_reader.read_playlist(get_file('1.3.8.fpl'))
         self.assertEqual(len(playlist.tracks), 8)
         t = playlist.tracks
@@ -190,7 +561,9 @@ class TestSequenceFunctions(unittest.TestCase):
             b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
-    def test_138_discontiguous_pkeys(self):
+
+
+    def test_1_3_8_discontiguous_pkeys(self):
         playlist = fpl_reader.read_playlist(get_file('1.3.8-discontiguous-pkeys.fpl'))
         self.assertEqual(len(playlist.tracks), 8)
         t = playlist.tracks
@@ -378,7 +751,9 @@ class TestSequenceFunctions(unittest.TestCase):
             b'tagtype':         b'id3v2.3|id3v1',
             b'mp3_stereo_mode': b'stereo'})
 
-    def test_138_missing_meta(self):
+
+
+    def test_1_3_8_missing_meta(self):
         playlist = fpl_reader.read_playlist(get_file('1.3.8-missing-meta.fpl'))
         self.assertEqual(len(playlist.tracks), 2)
         t = playlist.tracks
@@ -414,6 +789,94 @@ class TestSequenceFunctions(unittest.TestCase):
             b'codec': b'PCM',
             b'encoding': b'lossless',
             b'samplerate': b'48000'})
+
+
+
+    def test_1_3_9(self):
+        playlist = fpl_reader.read_playlist(get_file('1.2.9.fpl'))
+        self.assertEqual(len(playlist.tracks), 3)
+
+        test_track(playlist.tracks[0],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Kalimba.mp3',
+            file_size=8414449,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=348.00326530612244,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Kalimba',
+                b'artist':       b'Mr. Scruff',
+                b'album artist': b'Mr. Scruff',
+                b'album':        b'Ninja Tuna',
+                b'genre':        b'Electronic',
+                b'publisher':    b'Ninja Tune',
+                b'composer':     b'A. Carthy and A. Kingslow',
+                b'comment':      b'Ninja Tune Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[1],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Maid with the Flaxen Hair.mp3',
+            file_size=4113874,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=169.66530612244898,
+            primary_keys={
+                b'date':         b'2008',
+                b'title':        b'Maid with the Flaxen Hair',
+                b'artist':       b'Richard Stoltzman/Slovak Radio Symphony Orchestra',
+                b'album artist': b'Richard Stoltzman',
+                b'album':        b'Fine Music, Vol. 1',
+                b'genre':        b'Classical',
+                b'conductor':    b'Kirk Trevor',
+                b'composer':     b'Claude Debussy',
+                b'comment':      b'Navona Records'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+        test_track(playlist.tracks[2],
+            flags=1,
+            subsong_index=0,
+            file_name=b'file://C:\\Users\\Public\\Music\\Sample Music\\Sleep Away.mp3',
+            file_size=4842585,
+            file_time=datetime.datetime(2009, 7, 14, 5, 32, 31),
+            duration=200.54204081632653,
+            primary_keys={
+                b'date':         b'2004',
+                b'title':        b'Sleep Away',
+                b'artist':       b'Bob Acri',
+                b'album artist': b'Bob Acri',
+                b'album':        b'Bob Acri',
+                b'genre':        b'Jazz',
+                b'composer':     b'Robert R. Acri',
+                b'comment':      b'Blujazz Productions'},
+            secondary_keys={
+                b'tagtype':         b'id3v2.3|id3v1',
+                b'codec':           b'MP3',
+                b'mp3_stereo_mode': b'stereo',
+                b'codec_profile':   b'CBR',
+                b'encoding':        b'lossy',
+                b'bitrate':         b'192',
+                b'samplerate':      b'44100',
+                b'channels':        b'2'})
+
+
 
 if __name__ == '__main__':
     unittest.main()
