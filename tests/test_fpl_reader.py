@@ -10,8 +10,8 @@ def get_file(file_name):
         return handle.read()
 
 class TestSequenceFunctions(unittest.TestCase):
-    def test_136_missing_meta(self):
-        playlist = fpl_reader.read_playlist(get_file('1.3.6-missing-meta.fpl'))
+    def test_138_missing_meta(self):
+        playlist = fpl_reader.read_playlist(get_file('1.3.8-missing-meta.fpl'))
         self.assertEqual(len(playlist.tracks), 2)
         t = playlist.tracks
 
