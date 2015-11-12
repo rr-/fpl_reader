@@ -10,6 +10,43 @@ def get_file(file_name):
         return handle.read()
 
 class TestSequenceFunctions(unittest.TestCase):
+    def test_136_missing_meta(self):
+        playlist = fpl_reader.read_playlist(get_file('1.3.6-missing-meta.fpl'))
+        self.assertEqual(len(playlist.tracks), 2)
+        t = playlist.tracks
+
+        self.assertEqual(t[0].flags, 0)
+        self.assertEqual(t[0].file_name, b'http://sfstream1.somafm.com:8900/')
+        self.assertEqual(t[0].file_size, None)
+        self.assertEqual(t[0].file_time, None)
+        self.assertEqual(t[0].subsong_index, 0)
+        self.assertEqual(t[0].duration, None)
+        self.assertEqual(t[0].rpg_album, None)
+        self.assertEqual(t[0].rpg_track, None)
+        self.assertEqual(t[0].rpk_album, None)
+        self.assertEqual(t[0].rpk_track, None)
+        self.assertEqual(t[0].primary_keys, {})
+        self.assertEqual(t[0].secondary_keys, {})
+
+        self.assertEqual(t[1].flags, 19)
+        self.assertEqual(t[1].file_name, b'file://src\\vntools.other\\HCA_decoder\\hca_quality_samples\\sample.wav')
+        self.assertEqual(t[1].file_size, 1341248)
+        self.assertEqual(t[1].file_time, datetime.datetime(2014, 9, 12, 18, 52, 29))
+        self.assertEqual(t[1].subsong_index, 0)
+        self.assertEqual(t[1].duration, 6.9854375)
+        self.assertEqual(t[1].rpg_album, -1000.0)
+        self.assertEqual(t[1].rpg_track, -1000.0)
+        self.assertEqual(t[1].rpk_album, -1.0)
+        self.assertEqual(t[1].rpk_track, -1.0)
+        self.assertEqual(t[1].primary_keys, {})
+        self.assertEqual(t[1].secondary_keys, {
+            b'bitrate': b'1536',
+            b'bitspersample': b'16',
+            b'channels': b'2',
+            b'codec': b'PCM',
+            b'encoding': b'lossless',
+            b'samplerate': b'48000'})
+
     def test_discontiguous_pkeys(self):
         playlist = fpl_reader.read_playlist(get_file('discontiguous-pkeys.fpl'))
         self.assertEqual(len(playlist.tracks), 8)

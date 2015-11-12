@@ -13,7 +13,20 @@ class Playlist(object):
             + '\n])')
 
 class Track(PseudoObject):
-    pass
+    def __init__(self):
+        super(Track, self).__init__()
+        self.flags = None
+        self.subsong_index = None
+        self.file_name = None
+        self.file_size = None
+        self.file_time = None
+        self.duration = None
+        self.rpg_album = None
+        self.rpg_track = None
+        self.rpk_album = None
+        self.rpk_track = None
+        self.primary_keys = {}
+        self.secondary_keys = {}
 
 def read_track(track_no, meta_io, index_io):
     track = Track()
@@ -22,11 +35,11 @@ def read_track(track_no, meta_io, index_io):
     with meta_io.peek(file_name_offset):
         track.file_name = meta_io.read_to_zero()
     track.subsong_index = index_io.read_u32_le()
+    if track.flags & 1 == 0:
+        # e.g. stream that was never played, so it has no meta
+        return track
     track.file_size = index_io.read_s32_le()
-    track.unk2 = index_io.read_s32_le()
-
-    if track.unk2 != 0 and track.unk2 != -1:
-        print('I bet the file is truncated right after this...!')
+    unk2 = index_io.read_s32_le()
 
     track.file_time = get_time_from_ticks(index_io.read_u64_le())
     track.duration = index_io.read_f64()
@@ -40,7 +53,7 @@ def read_track(track_no, meta_io, index_io):
     primary_key_count, \
     secondary_key_count, \
     secondary_key_offset = entries[0:3]
-    track.unk5 = entries[secondary_key_offset - 1]
+    unk5 = entries[secondary_key_offset - 1]
 
     track.primary_keys = {}
     real_key = 0
