@@ -43,21 +43,31 @@ def read_track(track_no, meta_io, index_io):
     track.unk5 = entries[secondary_key_offset - 1]
 
     track.primary_keys = {}
+    real_key = 0
     for i in range(primary_key_count):
-        if entries[3+i*2] != i:
-            raise RuntimeError('Corrupt secondary key offset')
-        key_offset = entries[3+i*2+1]
-        with meta_io.peek(key_offset):
-            key = meta_io.read_to_zero()
+        # Primary keys not guaranteed to be contiguous. In this case, reuse
+        # the previous key.
+        if entries[3+real_key*2] == i:
+            key_offset = entries[3+real_key*2+1]
+            real_key += 1
+            with meta_io.peek(key_offset):
+                key = meta_io.read_to_zero()
+        elif i == 0:
+            raise RuntimeError('Missing first primary key, what now?')
+
+        # Primary values seem to be contiguous even if the keys are not
         value_offset = entries[3+2*primary_key_count+1+i]
         with meta_io.peek(value_offset):
             value = meta_io.read_to_zero()
+
+        # foobar2000's properties window duplicates and concatenates the value
+        # when discontiguous keys are detected; we do not.
         track.primary_keys[key] = value
 
     track.secondary_keys = {}
     for i in range(secondary_key_count):
-        key_offset = entries[secondary_key_offset+i*2+primary_key_count]
-        value_offset = entries[secondary_key_offset+i*2+primary_key_count+1]
+        key_offset = entries[3+secondary_key_offset+i*2]
+        value_offset = entries[3+secondary_key_offset+i*2+1]
         with meta_io.peek(key_offset):
             key = meta_io.read_to_zero()
         with meta_io.peek(value_offset):
