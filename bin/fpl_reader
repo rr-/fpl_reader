@@ -1,9 +1,0 @@
-#!/bin/python3
-import sys
-import fpl_reader
-
-
-with open(sys.argv[1], 'rb') as handle:
-    data = handle.read()
-    playlist = fpl_reader.read_playlist(data)
-    print(playlist)

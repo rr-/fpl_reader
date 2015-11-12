@@ -9,6 +9,9 @@ Usage:
 2. Install the library with `sudo python setup.py install`.
 3. Run the playlist reader with `fpl_reader path/to/playlist.fpl`.
 
+If you don't like to install stuff, you can also use `./main playlist.fpl`
+directly.
+
 Documentation
 =============
 

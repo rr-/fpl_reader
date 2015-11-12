@@ -1,0 +1,12 @@
+#!/bin/python3
+import os, sys
+from fpl_reader import read_playlist
+
+def main():
+    with open(sys.argv[1], 'rb') as handle:
+        data = handle.read()
+        playlist = read_playlist(data)
+        print(playlist)
+
+if __name__ == '__main__':
+    main()
