@@ -15,4 +15,5 @@ directly.
 Documentation
 =============
 
-TODO after things get done.
+See [fpl-format.md](fpl-format.md) for FPL file format documentation.
+
