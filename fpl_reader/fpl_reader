@@ -1,0 +1,10 @@
+#!/bin/python3
+import sys
+
+from playlist_reader import read_playlist
+
+
+with open(sys.argv[1], 'rb') as handle:
+    data = handle.read()
+    playlist = read_playlist(data)
+    print(playlist)
