@@ -91,15 +91,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[3].rpk_album, -1.0)
         self.assertEqual(t[3].rpk_track, -1.0)
         self.assertEqual(t[3].primary_keys, {
-            b'url': b'http://SomaFM.com/',
+            b'url':   b'http://SomaFM.com/',
             b'genre': b'Downtempo House Techno',
             b'title': b'Beat Blender: A late night blend of deep-house & downtempo chill. [SomaFM]'})
         self.assertEqual(t[3].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[4].flags, 85)
@@ -113,15 +113,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[4].rpk_album, -1.0)
         self.assertEqual(t[4].rpk_track, -1.0)
         self.assertEqual(t[4].primary_keys, {
-            b'url': b'http://somafm.com',
+            b'url':   b'http://somafm.com',
             b'genre': b'Ambient Chill',
             b'title': b'Groove Salad: a nicely chilled plate of ambient beats and grooves. [SomaFM]'})
         self.assertEqual(t[4].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[5].flags, 85)
@@ -135,15 +135,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[5].rpk_album, -1.0)
         self.assertEqual(t[5].rpk_track, -1.0)
         self.assertEqual(t[5].primary_keys, {
-            b'url': b'http://somafm.com',
+            b'url':   b'http://somafm.com',
             b'genre': b'Folk Indie Newgrass',
             b'title': b'Folk Forward: Indie Folk, Alt-folk and the occasional folk classics. [SomaFM]'})
         self.assertEqual(t[5].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[6].flags, 17)
@@ -157,15 +157,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[6].rpk_album, -1.0)
         self.assertEqual(t[6].rpk_track, -1.0)
         self.assertEqual(t[6].primary_keys, {
-            b'url': b'http://www.AH.FM',
+            b'url':   b'http://www.AH.FM',
             b'genre': b'Electronic',
             b'title': b'AH.FM - Leading Trance Radio'})
         self.assertEqual(t[6].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'192',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'192',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[7].flags, 17)
@@ -179,23 +179,23 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[7].rpk_album, -1.0)
         self.assertEqual(t[7].rpk_track, -1.0)
         self.assertEqual(t[7].primary_keys, {
-            b'album': b'Ninja Tuna',
+            b'album':        b'Ninja Tuna',
             b'album artist': b'Mr. Scruff',
-            b'artist': b'Mr. Scruff',
-            b'comment': b'Ninja Tune Records',
-            b'composer': b'A. Carthy and A. Kingslow',
-            b'date': b'2008',
-            b'genre': b'Electronic',
-            b'publisher': b'Ninja Tune',
-            b'title': b'Kalimba'})
+            b'artist':       b'Mr. Scruff',
+            b'comment':      b'Ninja Tune Records',
+            b'composer':     b'A. Carthy and A. Kingslow',
+            b'date':         b'2008',
+            b'genre':        b'Electronic',
+            b'publisher':    b'Ninja Tune',
+            b'title':        b'Kalimba'})
         self.assertEqual(t[7].secondary_keys, {
-            b'codec': b'MP3',
-            b'codec_profile': b'CBR',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'192',
-            b'channels': b'2',
-            b'tagtype': b'id3v2.3|id3v1',
+            b'codec':           b'MP3',
+            b'codec_profile':   b'CBR',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'192',
+            b'channels':        b'2',
+            b'tagtype':         b'id3v2.3|id3v1',
             b'mp3_stereo_mode': b'stereo'})
 
     def test_w1(self):
@@ -279,15 +279,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[3].rpk_album, -1.0)
         self.assertEqual(t[3].rpk_track, -1.0)
         self.assertEqual(t[3].primary_keys, {
-            b'url': b'http://SomaFM.com/',
+            b'url':   b'http://SomaFM.com/',
             b'genre': b'Downtempo House Techno',
             b'title': b'Beat Blender: A late night blend of deep-house & downtempo chill. [SomaFM]'})
         self.assertEqual(t[3].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[4].flags, 5)
@@ -301,15 +301,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[4].rpk_album, -1.0)
         self.assertEqual(t[4].rpk_track, -1.0)
         self.assertEqual(t[4].primary_keys, {
-            b'url': b'http://somafm.com',
+            b'url':   b'http://somafm.com',
             b'genre': b'Ambient Chill',
             b'title': b'Groove Salad: a nicely chilled plate of ambient beats and grooves. [SomaFM]'})
         self.assertEqual(t[4].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[5].flags, 5)
@@ -323,15 +323,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[5].rpk_album, -1.0)
         self.assertEqual(t[5].rpk_track, -1.0)
         self.assertEqual(t[5].primary_keys, {
-            b'url': b'http://somafm.com',
+            b'url':   b'http://somafm.com',
             b'genre': b'Dubstep Dub',
             b'title': b'Future Folk: Indie Folk, Neobilly, Steampunk, Gaslight and the occasional folk classics. [SomaFM]'})
         self.assertEqual(t[5].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[6].flags, 1)
@@ -345,15 +345,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[6].rpk_album, -1.0)
         self.assertEqual(t[6].rpk_track, -1.0)
         self.assertEqual(t[6].primary_keys, {
-            b'url': b'http://www.AH.FM',
+            b'url':   b'http://www.AH.FM',
             b'genre': b'Electronic',
             b'title': b'AH.FM - Leading Trance Radio'})
         self.assertEqual(t[6].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'192',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'192',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
         self.assertEqual(t[7].flags, 1)
@@ -367,15 +367,15 @@ class TestSequenceFunctions(unittest.TestCase):
         self.assertEqual(t[7].rpk_album, -1.0)
         self.assertEqual(t[7].rpk_track, -1.0)
         self.assertEqual(t[7].primary_keys, {
-            b'url': b'http://somafm.com',
+            b'url':   b'http://somafm.com',
             b'genre': b'Dubstep Dub',
             b'title': b'Future Folk: Indie Folk, Neobilly, Steampunk, Gaslight and the occasional folk classics. [SomaFM]'})
         self.assertEqual(t[7].secondary_keys, {
-            b'codec': b'MP3',
-            b'samplerate': b'44100',
-            b'encoding': b'lossy',
-            b'bitrate': b'128',
-            b'channels': b'2',
+            b'codec':           b'MP3',
+            b'samplerate':      b'44100',
+            b'encoding':        b'lossy',
+            b'bitrate':         b'128',
+            b'channels':        b'2',
             b'mp3_stereo_mode': b'stereo'})
 
 if __name__ == '__main__':
