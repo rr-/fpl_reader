@@ -17,7 +17,7 @@ class Track(PseudoObject):
 
 def read_track(track_no, meta_io, index_io):
     track = Track()
-    track.type = index_io.read_s32_le()
+    track.flags = index_io.read_s32_le()
     file_name_offset = index_io.read_u32_le()
     with meta_io.peek(file_name_offset):
         track.file_name = meta_io.read_to_zero()
@@ -64,7 +64,7 @@ def read_track(track_no, meta_io, index_io):
             value = meta_io.read_to_zero()
         track.secondary_keys[key] = value
 
-    if track.type == 5:
+    if track.flags & 0x04:
         track.padding = index_io.read(64)
 
     return track
