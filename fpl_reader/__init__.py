@@ -1,0 +1,1 @@
+from fpl_reader.playlist_reader import read_playlist

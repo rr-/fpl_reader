@@ -1,6 +1,7 @@
 import io
 import struct
 
+
 class CoolIO(object):
     def __init__(self, data=None):
         self.file = io.BytesIO(data)

@@ -1,6 +1,7 @@
-from pseudo_object import PseudoObject
-from cool_io import CoolIO
-from windows_time import get_time_from_ticks
+from fpl_reader.pseudo_object import PseudoObject
+from fpl_reader.cool_io import CoolIO
+from fpl_reader.windows_time import get_time_from_ticks
+
 
 class Playlist(object):
     def __init__(self, tracks):
