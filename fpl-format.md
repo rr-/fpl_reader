@@ -118,10 +118,6 @@ in situations where a single file contains multiple songs.
 
 The 'file_size' field contains the size of the track's file in bytes.
 
-#### track.unk2
-
-Not sure what this field does.
-
 #### track.file_time
 
 The 'file_time' field contains the last-modified time of the track file. It is
