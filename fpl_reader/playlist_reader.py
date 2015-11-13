@@ -52,7 +52,7 @@ def read_track(track_no, meta_io, index_io):
     primary_key_count, \
     secondary_key_count, \
     secondary_key_offset = entries[0:3]
-    unk5 = entries[secondary_key_offset - 1]
+    unk0 = entries[secondary_key_offset - 1]
 
     track.primary_keys = {}
     real_key = 0

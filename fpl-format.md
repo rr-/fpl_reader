@@ -156,7 +156,7 @@ The following fields make up an 'entries' field, in order:
     1. secondary_key_count  (4 bytes)
     2. secondary_key_offset (4 bytes)
     4. primary_keys         (4 * 2 * $primary_key_count bytes)
-    5. unk5                 (4 bytes)
+    5. unk0                 (4 bytes)
     6. primary_values       (4 * $primary_key_count bytes)
     7. secondary_keys       (4 * 2 * $secondary_key_count bytes)
 
@@ -191,9 +191,9 @@ The second word contains an offset (in bytes) starting at the beginning of the
 'meta' field at which a null-terminated string may be found. This string is
 the key's name.
 
-##### unk5 
+##### unk0 
 
-The 'unk5' field is a single 32-bit word that hasn't served a purpose, but it
+The 'unk0' field is a single 32-bit word that hasn't served a purpose, but it
 has so far always been a continuation of the first-word increment that occurs
 in the preceding series of primary keys.
 
@@ -210,7 +210,7 @@ absent value will cause a duplication of the previous 'primary_values' field
 in order to fill the gap. Example of discontiguity starting from the beginning
 of the 'primary_keys' field:
 
-    0,k0, 1,k1, 2,k2, 4,k4, unk5, v0, v1, v2, v2, v4
+    0,k0, 1,k1, 2,k2, 4,k4, unk0, v0, v1, v2, v2, v4
 
 Notice that 3,k3 is missing from 'primary_keys',  and therefore v2 is
 duplicated to fill the gap.
