@@ -42,8 +42,8 @@ class CoolIO(object):
         while byte != b"\x00":
             out += byte
             byte = self.file.read(1)
-            if n > 1000:
-                raise RuntimeError('dude, I\'m reading for too long (1000+ bytes)')
+            if n > 4096:
+                raise RuntimeError('String too long (corrupt file?)')
             n += 1
         return out
 
