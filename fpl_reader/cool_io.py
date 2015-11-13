@@ -61,6 +61,7 @@ class CoolIO(object):
     def read_u32_be(self): return struct.unpack('>I', self.file.read(4))[0]
     def read_u64_be(self): return struct.unpack('>Q', self.file.read(8))[0]
     def read_s32_le(self): return struct.unpack('<i', self.file.read(4))[0]
+    def read_s64_le(self): return struct.unpack('<q', self.file.read(8))[0]
     def read_f32(self): return struct.unpack('f', self.file.read(4))[0]
     def read_f64(self): return struct.unpack('d', self.file.read(8))[0]
 

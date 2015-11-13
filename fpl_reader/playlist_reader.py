@@ -38,8 +38,7 @@ def read_track(track_no, meta_io, index_io):
     if track.flags & 1 == 0:
         # e.g. stream that was never played, so it has no meta
         return track
-    track.file_size = index_io.read_s32_le()
-    unk2 = index_io.read_s32_le()
+    track.file_size = index_io.read_s64_le()
 
     track.file_time = get_time_from_ticks(index_io.read_u64_le())
     track.duration = index_io.read_f64()
