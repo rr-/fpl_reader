@@ -1,4 +1,3 @@
-#!/bin/python3
 import os
 import datetime
 import fpl_reader
