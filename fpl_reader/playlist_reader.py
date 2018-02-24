@@ -3,14 +3,16 @@ from fpl_reader.cool_io import CoolIO
 from fpl_reader.windows_time import get_time_from_ticks
 
 
-class Playlist(object):
+class Playlist:
     def __init__(self, tracks):
         self.tracks = tracks
 
     def __repr__(self):
-        return ('Playlist([\n'
+        return (
+            'Playlist([\n'
             + ',\n\n'.join(repr(track) for track in self.tracks)
             + '\n])')
+
 
 class Track(PseudoObject):
     def __init__(self):
@@ -28,7 +30,8 @@ class Track(PseudoObject):
         self.primary_keys = {}
         self.secondary_keys = {}
 
-def read_track(track_no, meta_io, index_io):
+
+def read_track(meta_io, index_io):
     track = Track()
     track.flags = index_io.read_s32_le()
     file_name_offset = index_io.read_u32_le()
@@ -50,9 +53,9 @@ def read_track(track_no, meta_io, index_io):
     entries = [index_io.read_u32_le() for i in range(entry_count)]
 
     primary_key_count, \
-    secondary_key_count, \
-    secondary_key_offset = entries[0:3]
-    unk0 = entries[secondary_key_offset - 1]
+        secondary_key_count, \
+        secondary_key_offset = entries[0:3]
+    # unk0 = entries[secondary_key_offset - 1]
 
     track.primary_keys = {}
     real_key = 0
@@ -78,8 +81,8 @@ def read_track(track_no, meta_io, index_io):
 
     track.secondary_keys = {}
     for i in range(secondary_key_count):
-        key_offset = entries[3+secondary_key_offset+i*2]
-        value_offset = entries[3+secondary_key_offset+i*2+1]
+        key_offset = entries[3 + secondary_key_offset + i * 2]
+        value_offset = entries[3 + secondary_key_offset + i * 2 + 1]
         with meta_io.peek(key_offset):
             key = meta_io.read_to_zero()
         with meta_io.peek(value_offset):
@@ -87,7 +90,7 @@ def read_track(track_no, meta_io, index_io):
         track.secondary_keys[key] = value
 
     if track.flags & 0x04:
-        track.padding = index_io.read(64)
+        _padding = index_io.read(64)
 
     return track
 
@@ -96,18 +99,16 @@ def read_playlist(data):
     magic = b'\xE1\xA0\x9C\x91\xF8\x3C\x77\x42\x85\x2C\x3B\xCC\x14\x01\xD3\xF2'
 
     tracks = []
-    with CoolIO(data) as fh:
-        if fh.read(len(magic)) != magic:
+    with CoolIO(data) as handle:
+        if handle.read(len(magic)) != magic:
             raise RuntimeError('Not a FPL file')
-        meta_size = fh.read_u32_le()
-        meta = fh.read(meta_size)
-        track_count = fh.read_u32_le()
+        meta_size = handle.read_u32_le()
+        meta = handle.read(meta_size)
+        track_count = handle.read_u32_le()
 
-        with CoolIO(meta) as meta_io, \
-            CoolIO(fh.read_to_eof()) as index_io:
-
+        with CoolIO(meta) as meta_io, CoolIO(handle.read_to_eof()) as index_io:
             for track_no in range(track_count):
-                track = read_track(track_no, meta_io, index_io)
+                track = read_track(meta_io, index_io)
                 tracks.append(track)
 
     return Playlist(tracks)

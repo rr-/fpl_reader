@@ -10,7 +10,6 @@ def get_file(file_name):
         return handle.read()
 
 
-
 def test_0_9_1():
     playlist = fpl_reader.read_playlist(get_file('1.0.3.fpl'))
     assert len(playlist.tracks) == 3
@@ -774,14 +773,14 @@ def test_1_3_8_missing_meta():
 
     t[0].flags == 0
     t[0].file_name == b'http://sfstream1.somafm.com:8900/'
-    t[0].file_size == None
-    t[0].file_time == None
+    t[0].file_size is None
+    t[0].file_time is None
     t[0].subsong_index == 0
-    t[0].duration == None
-    t[0].rpg_album == None
-    t[0].rpg_track == None
-    t[0].rpk_album == None
-    t[0].rpk_track == None
+    t[0].duration is None
+    t[0].rpg_album is None
+    t[0].rpg_track is None
+    t[0].rpk_album is None
+    t[0].rpk_track is None
     t[0].primary_keys == {}
     t[0].secondary_keys == {}
 
