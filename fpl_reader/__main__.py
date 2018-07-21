@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import argparse
 from fpl_reader import read_playlist
 

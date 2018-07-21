@@ -35,8 +35,7 @@ def read_track(meta_io, index_io):
     track = Track()
     track.flags = index_io.read_s32_le()
     file_name_offset = index_io.read_u32_le()
-    with meta_io.peek(file_name_offset):
-        track.file_name = meta_io.read_to_zero()
+    track.file_name = meta_io.seek(file_name_offset).read_to_zero()
     track.subsong_index = index_io.read_u32_le()
     if track.flags & 1 == 0:
         # e.g. stream that was never played, so it has no meta
@@ -52,41 +51,46 @@ def read_track(meta_io, index_io):
     entry_count = index_io.read_u32_le()
     entries = [index_io.read_u32_le() for i in range(entry_count)]
 
-    primary_key_count, \
-        secondary_key_count, \
-        secondary_key_offset = entries[0:3]
-    # unk0 = entries[secondary_key_offset - 1]
+    primary_key_count = entries.pop(0)
+    secondary_key_count = entries.pop(0)
+    secondary_keys_offset = entries.pop(0)
+
+    primary_key_name_offsets = {}
+    for _ in range(primary_key_count):
+        key_name_id = entries.pop(0)
+        key_name_offset = entries.pop(0)
+        primary_key_name_offsets[key_name_id] = key_name_offset
+    entries.pop(0)  # unk0
+    primary_key_value_offsets = [
+        entries.pop(0)
+        for _ in range(primary_key_count)
+    ]
 
     track.primary_keys = {}
-    real_key = 0
+    last_key_offset = None
     for i in range(primary_key_count):
-        # Primary keys not guaranteed to be contiguous. In this case, reuse
-        # the previous key.
-        if entries[3+real_key*2] == i:
-            key_offset = entries[3+real_key*2+1]
-            real_key += 1
-            with meta_io.peek(key_offset):
-                key = meta_io.read_to_zero()
-        elif i == 0:
-            raise RuntimeError('Missing first primary key, what now?')
-
-        # Primary values seem to be contiguous even if the keys are not
-        value_offset = entries[3+2*primary_key_count+1+i]
-        with meta_io.peek(value_offset):
-            value = meta_io.read_to_zero()
-
         # foobar2000's properties window duplicates and concatenates the value
         # when discontiguous keys are detected; we do not.
+        last_key_offset = primary_key_name_offsets.get(i, last_key_offset)
+        value_offset = primary_key_value_offsets[i]
+
+        if last_key_offset is None:
+            raise RuntimeError('Missing first primary key, now what?')
+
+        key = meta_io.seek(last_key_offset).read_to_zero()
+        value = meta_io.seek(value_offset).read_to_zero()
         track.primary_keys[key] = value
+
+    assert primary_key_count * 3 + 1 <= secondary_keys_offset
+    for i in range(secondary_keys_offset - (primary_key_count * 3 + 1)):
+        entries.pop(0)
 
     track.secondary_keys = {}
     for i in range(secondary_key_count):
-        key_offset = entries[3 + secondary_key_offset + i * 2]
-        value_offset = entries[3 + secondary_key_offset + i * 2 + 1]
-        with meta_io.peek(key_offset):
-            key = meta_io.read_to_zero()
-        with meta_io.peek(value_offset):
-            value = meta_io.read_to_zero()
+        key_offset = entries.pop(0)
+        value_offset = entries.pop(0)
+        key = meta_io.seek(key_offset).read_to_zero()
+        value = meta_io.seek(value_offset).read_to_zero()
         track.secondary_keys[key] = value
 
     if track.flags & 0x04:

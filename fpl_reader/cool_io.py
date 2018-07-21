@@ -24,16 +24,15 @@ class CoolIO:
         return self.file.tell()
 
     def seek(self, *args):
-        return self.file.seek(*args)
+        self.file.seek(*args)
+        return self
 
     def eof(self):
         return self.tell() == self.size()
 
     def skip(self, num):
         self.file.seek(num, io.SEEK_CUR)
-
-    def peek(self, *args):
-        return self.PeekObject(self.file, *args)
+        return self
 
     def read_to_zero(self):
         out = b''
@@ -76,16 +75,3 @@ class CoolIO:
 
     def read_f64(self):
         return struct.unpack('d', self.file.read(8))[0]
-
-    class PeekObject:
-        def __init__(self, file, *seek_args):
-            self.file = file
-            self.seek_args = seek_args
-            self.old_pos = 0
-
-        def __enter__(self):
-            self.old_pos = self.file.tell()
-            self.file.seek(*self.seek_args)
-
-        def __exit__(self, *unused):
-            self.file.seek(self.old_pos)

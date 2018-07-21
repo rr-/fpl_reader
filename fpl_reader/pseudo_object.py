@@ -8,7 +8,7 @@ class PseudoObject:
 
     def __setattr__(self, k, v):
         if k.startswith('_'):
-            return super(PseudoObject, self).__setattr__(k, v)
+            super(PseudoObject, self).__setattr__(k, v)
         self._values[k] = v
 
     def __getattr__(self, k):
