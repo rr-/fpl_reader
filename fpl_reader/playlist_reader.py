@@ -49,7 +49,7 @@ def read_track(meta_io, index_io):
     track.rpk_album = index_io.read_f32()
     track.rpk_track = index_io.read_f32()
     entry_count = index_io.read_u32_le()
-    entries = [index_io.read_u32_le() for i in range(entry_count)]
+    entries = [index_io.read_u32_le() for _ in range(entry_count)]
 
     primary_key_count = entries.pop(0)
     secondary_key_count = entries.pop(0)
@@ -82,11 +82,11 @@ def read_track(meta_io, index_io):
         track.primary_keys[key] = value
 
     assert primary_key_count * 3 + 1 <= secondary_keys_offset
-    for i in range(secondary_keys_offset - (primary_key_count * 3 + 1)):
+    for _ in range(secondary_keys_offset - (primary_key_count * 3 + 1)):
         entries.pop(0)
 
     track.secondary_keys = {}
-    for i in range(secondary_key_count):
+    for _ in range(secondary_key_count):
         key_offset = entries.pop(0)
         value_offset = entries.pop(0)
         key = meta_io.seek(key_offset).read_to_zero()
