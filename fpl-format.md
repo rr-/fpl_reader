@@ -30,214 +30,228 @@ get in touch.
 
 ## Playlist
 
-The following fields make up a complete 'playlist', in order:
+The following fields make up a complete `playlist`, in order:
 
-    0. magic        (16 bytes)
-    1. meta_size    (4 bytes)
-    2. meta         ($meta_size bytes)
-    3. track_count  (4 bytes)
-    4. track(s)     ($track_count 'track' fields, which are variable-sized)
+\# | Field name   | Size
+--|---------------|-------
+1 | `magic`       | 16 bytes
+2 | `meta_size`   | 4 bytes
+3 | `meta`        | `meta_size` bytes
+4 | `track_count` | 4 bytes
+5 | `tracks`      | `track_count` `track` fields, which are variable-sized
 
-### magic
+### `magic`
 
-The 'magic' field is a 16-byte magic number. It is always set to the
+The `magic` field is a 16-byte magic number. It is always set to the
 following hexadecimal values:
 
     E1 A0 9C 91 F8 3C 77 42 85 2C 3B CC 14 01 D3 F2
 
-### meta_size
+### `meta_size`
 
-The 'meta_size' field informs the reader how many bytes are filled by the
-variable-sized 'meta' field.
+The `meta_size` field informs the reader how many bytes are filled by the
+variable-sized `meta` field.
 
-### meta
+### `meta`
 
-The 'meta' field is a variable-sized concatenation of null-terminated strings.
-Its size is given by the value in the 'meta_size' field. A track will use
-key:value pairs as a means to provide track metadata; the track filename, key
-names, and value data are all stored in the 'meta' field. This field appears
-to be deduplicated and if more than one track shares a metadata string, each
-will point to the same 'meta' offset.
+The `meta` field is a variable-sized concatenation of null-terminated strings.
+Its size is given by the value in the `meta_size` field. A structure defined at
+a later, `track` encodes string information by pointing at various places
+within the `meta` field. The strings within the `meta` field appear to be
+deduplicated, i.e. if `track` shares given string more than once, each
+occurrence will point to the same offset within the `meta` field.
 
-### track_count
+### `track_count`
 
-The 'track_count' informs the reader of how many tracks are represented in the
-variable-sized track field.
+The `track_count` informs the reader of how many tracks are represented in the
+variable-sized `tracks` field.
 
-### track(s)
+### `tracks`
 
-The following fields make up a complete 'track', in order:
+The following fields make up a complete `track` structure, in order:
 
-    0.  flags               (4 bytes)
-    1.  file_name_offset    (4 bytes)
-    2.  subsong_index       (4 bytes)
-    3.  file_size           (8 bytes)
-    4.  file_time           (8 bytes)
-    5.  duration            (8 bytes)
-    6.  rpg_album           (4 bytes)
-    7.  rpg_track           (4 bytes)
-    8.  rpk_album           (4 bytes)
-    9.  rpk_track           (4 bytes)
-    10. entry_count         (4 bytes)
-    11. entries             (4 * $entry_count bytes)
-    12. padding             (optional, 64 bytes)
+\# | Field name         | Size
+---|--------------------|-------
+1  | `flags`            | 4 bytes
+2  | `file_name_offset` | 4 bytes
+3  | `subsong_index`    | 4 bytes
+4  | `file_size`        | 8 bytes
+5  | `file_time`        | 8 bytes
+6  | `duration`         | 8 bytes
+7  | `rpg_album`        | 4 bytes
+8  | `rpg_track`        | 4 bytes
+9  | `rpk_album`        | 4 bytes
+10 | `rpk_track`        | 4 bytes
+11 | `entry_count`      | 4 bytes
+12 | `entries`          | 4 * `entry_count` bytes
+13 | `padding`          | optional, 64 bytes
 
-#### track.flags
+#### `track.flags`
 
-Based on experimentation, 'flags' might be a collection of bits that indicate
+Based on experimentation, `flags` might be a collection of bits that indicate
 the existence of certain attributes for a track depending on whether the bit
 is set or not. These are the bits we think we understand:
 
-0x01: When set, indicates the track has metadata. If this bit is unset, the
+- `0x01`: When set, indicates the track has metadata. If this bit is unset, the
 reader should assume this track has been completely read. Only the
-'file_name_offset' and 'subsong_index' fields will be present, and the 'track'
-field will conclude after 'subsong_index'.
+`file_name_offset` and `subsong_index` fields will be present, and the `track`
+field will conclude after `subsong_index`.
 
-0x04: When set, indicates the presence of 64 bytes of unknown purpose
-following the 'entries' field. When unset, the 'track' field concludes
-directly following 'entries'.
+- `0x04`: When set, indicates the presence of 64 bytes of unknown purpose
+following the `entries` field (the `padding` field). When unset, the `track`
+field concludes directly following `entries`.
 
 Other flags that have been seen but whose purpose remains a mystery:
 
-    0x02    (1.3.8-missing-meta.fpl)
-    0x10    (1.3.9-discontiguous-pkeys.fpl)
-    0x40    (1.3.9-discontiguous-pkeys.fpl)
+- `0x02` (`1.3.8-missing-meta.fpl`)
+- `0x10` (`1.3.9-discontiguous-pkeys.fpl`)
+- `0x40` (`1.3.9-discontiguous-pkeys.fpl`)
 
-#### track.file_name_offset
+#### `track.file_name_offset`
 
-The 'file_name_offset' field informs the reader of the offset (in bytes) from
-the start of the 'meta' field at which the null-terminated string containing
-the track's file name or location can be found.
+The `file_name_offset` field informs the reader of the offset (in bytes) from
+the start of the `meta` field at which null-terminated string containing the
+track's file name or location can be found.
 
-#### track.subsong_index
+#### `track.subsong_index`
 
-The 'subsong_index' is used to identify the track's subsong, which is needed
-in situations where a single file contains multiple songs.
+The `subsong_index` is used to identify the track's subsong, which is needed
+when a single file contains multiple songs.
 
-#### track.file_size
+#### `track.file_size`
 
-The 'file_size' field contains the size of the track's file in bytes.
+The `file_size` field contains the size of the track's file in bytes.
 
-#### track.file_time
+#### `track.file_time`
 
-The 'file_time' field contains the last-modified time of the track file. It is
+The `file_time` field contains the last-modified time of the track file. It is
 represented in 64-bit Windows Ticks, which is the count of 100-nanosecond
 intervals that have elapsed since 12:00:00 midnight, January 1, 1601 (0:00:00
-UTC on January 1, 1601, in the Gregorian calendar.
+UTC on January 1, 1601, in the Gregorian calendar).
 
-#### track.duration
+#### `track.duration`
 
-The 'duration' field contains the playtime of the track in seconds. This is in
-64-bit Windows Ticks like the 'file_time' field.
+The `duration` field contains the playtime of the track in seconds. This is in
+64-bit Windows Ticks like the `file_time` field.
 
-#### track.rpg_album, track.rpg_track, track.rpk_album, track.rpk_track
+#### `track.rpg_album`, `track.rpg_track`, `track.rpk_album`, `track.rpk_track`
 
-The 'rp{g,k}_{album,track}' fields contain replaygain and replaygain peak
+The `rp{g,k}_{album,track}` fields contain replaygain and replaygain peak
 information for the album and track respectively. These are floating-point
 values.
 
-#### track.entry_count
+#### `track.entry_count`
 
-The 'entry_count' counts the number of keys and values that follow in the
-'entries' field. Each key and value is 4 bytes each, so the current 'track'
-field concludes 4*entry_count bytes after the entry_count (unless the optional
+The `entry_count` counts the number of entries that follow in the `entries`
+field. Every "entry" is 4 bytes long, so the current `track` field concludes 4
+* `entry_count` bytes after the `entry_count` (unless the optional
 padding bytes are present).
 
-#### track.entries
+#### `track.entries`
 
-The 'entries' field is 4*entry_count bytes long. It is a collection of key and
-value pairs that are comprised of offsets into the 'meta' field. The key's
+The `entries` field is 4 * `entry_count` bytes long. It is a collection of key
+and value pairs that are comprised of offsets into the `meta` field. The key's
 offset points to the key's name, and the value's offset points to the value's
-data.  The name and data are both null-terminated strings in the 'meta' field.
+data. The name and data are both null-terminated strings in the `meta` field.
 
-The following fields make up an 'entries' field, in order:
+Structure of the `entries` field (or meaning of each `entry`), in order:
 
-    0. primary_key_count    (4 bytes)
-    1. secondary_key_count  (4 bytes)
-    2. secondary_key_offset (4 bytes)
-    4. primary_keys         (4 * 2 * $primary_key_count bytes)
-    5. unk0                 (4 bytes)
-    6. primary_values       (4 * $primary_key_count bytes)
-    7. secondary_keys       (4 * 2 * $secondary_key_count bytes)
+\# | Field name             | Size
+--|-------------------------|-------
+1 | `primary_key_count`     | 4 bytes
+2 | `secondary_key_count`   | 4 bytes
+3 | `secondary_keys_offset` | 4 bytes
+5 | `primary_keys`          | 4 * 2 * `primary_key_count` bytes
+6 | `unk0`                  | 4 bytes
+7 | `primary_values`        | 4 * `primary_key_count` bytes
+8 | `secondary_keys`        | 4 * 2 * `secondary_key_count` bytes
 
-##### primary_key_count
+##### `entries.primary_key_count`
 
-The 'primary_key_count' field indicates the number of primary key:value
+The `primary_key_count` field indicates the number of primary key-value
 relationships that exist. This field can be used to calculate the length of
-the upcoming 'primary_keys' and 'primary_values' fields.
+the upcoming `primary_keys` and `primary_values` fields.
 
-##### secondary_key_count
+##### `entries.secondary_key_count`
 
-The 'secondary_key_count' field indicates the number of secondary key_value
+The `secondary_key_count` field indicates the number of secondary key_value
 relationships that exist. This field can be used to calculate the length of
-the upcoming 'secondary_keys' field.
+the upcoming `secondary_keys` field.
 
-##### secondary_key_offset
+##### `entries.secondary_keys_offset`
 
-The 'secondary_key_offset' field identifies the offset of the start of the
-'secondary_keys' field. The offset is given in 32-bit words, not bytes.
+The `secondary_keys_offset` field identifies the offset of the start of the
+`secondary_keys` field. The offset is given in 32-bit words, not bytes.
 
-##### primary_keys 
+##### `entries.primary_keys`
 
-The 'primary_keys' field is comprised of two 32-bit words for each primary key
-counted by the 'primary_key_count' field.
+The `primary_keys` field is comprised of two 32-bit words for each primary key
+counted by the `primary_key_count` field.
 
 The first word contains an integer starting at zero and increasing for each
 subsequent key. The purpose of the leading integer is not fully understood.
-It's incrementation may be discontiguous - gaps in the count have been
-observed.
+Its incrementation may be discontiguous - gaps in the count have been observed.
 
 The second word contains an offset (in bytes) starting at the beginning of the
-'meta' field at which a null-terminated string may be found. This string is
+`meta` field at which a null-terminated string may be found. This string is
 the key's name.
 
-##### unk0 
+##### `entries.unk0`
 
-The 'unk0' field is a single 32-bit word that hasn't served a purpose, but it
+The `unk0` field is a single 32-bit word that hasn't served a purpose, but it
 has so far always been a continuation of the first-word increment that occurs
 in the preceding series of primary keys.
 
-##### primary_values 
+##### `entries.primary_values`
 
-The 'primary_values' field is a series of 32-bit words. There will be one word
-for each of the primary keys counted by 'primary_key_count'. Each contains an
-offset (in bytes) starting at the beginning of the 'meta' field at which a
+The `primary_values` field is a series of 32-bit words. There will be one word
+for each of the primary keys counted by `primary_key_count`. Each contains an
+offset (in bytes) starting at the beginning of the `meta` field at which a
 null-terminated string can be found. This string is the data that should be
 associated with the primary key of the same key index.
 
-In the event of a discontiguous count of the 'primary_keys' leading word, the
-absent value will cause a duplication of the previous 'primary_values' field
+In the event of a discontiguous count of the `primary_keys` leading word, the
+absent value will cause a duplication of the previous `primary_values` field
 in order to fill the gap. Example of discontiguity starting from the beginning
-of the 'primary_keys' field:
+of the `primary_keys` field:
 
-    0,k0, 1,k1, 2,k2, 4,k4, unk0, v0, v1, v2, v2, v4
+    0, key 0 offset
+    1, key 1 offset
+    2, key 2 offset
+    4, key 4 offset
+    unk0
+    value 0 offset
+    value 1 offset
+    value 2 offset
+    value 2 offset
+    value 4 offset
 
-Notice that 3,k3 is missing from 'primary_keys',  and therefore v2 is
-duplicated to fill the gap.
+Notice that `3, key 3 offset` is missing from `primary_keys`,  and therefore
+`value 2 offset` is duplicated to fill the gap.
 
-To assemble a primary key:value, the key name should be taken by following the
-offset found in the 'primary_keys' field, and the value data should be taken
+To assemble a primary key-value, the key name should be taken by following the
+offset found in the `primary_keys` field, and the value data should be taken
 by following the offset found in the corresponding word in the
-'primary_values' field.
+`primary_values` field.
 
-##### secondary_keys
+##### `entries.secondary_keys`
 
-The 'secondary_keys' field is comprised of pairs of 32-bit words, one pair per
-key:value set. The start of this field will be located at the position
-indicated by the 'secondary_key_offset' which is an offset (in 32-bit words)
-from the start of the 'primary_keys' field.
+The `secondary_keys` field is comprised of pairs of 32-bit words, one pair per
+key-value set. The start of this field is located at the position indicated by
+the `secondary_keys_offset` which is an offset (in 32-bit words) from the start
+of the `primary_keys` field.
 
-The first word is an offset (in bytes) from the beginning of the 'meta' field
+The first word is an offset (in bytes) from the beginning of the `meta` field
 at which a null-terminated string can be found. This string is the key name.
 
 The second word operates similarly and provides the location of the value data
 for this key.
 
-#### padding
+#### `entries.padding`
 
 If a track contains padding, it is always 64 bytes, and its presence is
-indicated by bit 0x04 in the 'flags' field. The purpose of the 'padding' field
-is currently unknown.
+indicated by bit `0x04` in the `flags` field. The purpose of the `padding`
+field is currently unknown.
 
 # References
 
